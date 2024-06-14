@@ -44,7 +44,7 @@ jobs:
           creds = None
           if os.path.exists('token.json'):
               creds = Credentials.from_authorized_user_file('token.json', ['https://www.googleapis.com/auth/photoslibrary.readonly'])
-              else:
+          else:
                   flow = InstalledAppFlow.from_client_secrets_file('token.json', 
                       {
                         "installed": {
@@ -57,7 +57,6 @@ jobs:
                   creds = flow.run_local_server(port=0)
               with open('token.json', 'w') as token:
                   token.write(creds.to_json())
-
           EOF
       - name: Send Telegram Message
         env:
