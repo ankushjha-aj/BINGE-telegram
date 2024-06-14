@@ -4,8 +4,6 @@ on:
   push:
     branches:
       - main
-  # schedule:
-  #   - cron: '0 */4 * * *'  # Every 4 hours (adjust as needed)
   workflow_dispatch:     # Allow manual triggering
 
 jobs:
@@ -39,25 +37,20 @@ jobs:
           import os
           from google.oauth2.credentials import Credentials
           from google_auth_oauthlib.flow import InstalledAppFlow
-          from google.auth.transport.requests import Request
           
           creds = None
           if os.path.exists('token.json'):
               creds = Credentials.from_authorized_user_file('token.json', ['https://www.googleapis.com/auth/photoslibrary.readonly'])
           else:
-                  flow = InstalledAppFlow.from_client_secrets_file('token.json', 
-                      {
-                        "installed": {
-                          "client_id": os.environ["GOOGLE_CLIENT_ID"],
-                          "client_secret": os.environ["GOOGLE_CLIENT_SECRET"],
-                          "redirect_uris": ["http://localhost"]
-                          }
-                      },
-                  ['https://www.googleapis.com/auth/photoslibrary.readonly'])
-                  creds = flow.run_local_server(port=0)
+              flow = InstalledAppFlow.from_client_secrets_file(
+                  'credentials.json', 
+                  scopes=['https://www.googleapis.com/auth/photoslibrary.readonly']
+              )
+              creds = flow.run_local_server(port=0)
               with open('token.json', 'w') as token:
                   token.write(creds.to_json())
           EOF
+
       - name: Send Telegram Message
         env:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
@@ -79,10 +72,13 @@ jobs:
 
           # Get the link of the most recent shared album
           shared_albums = photos_service.sharedAlbums().list().execute()
-          shared_album_link = shared_albums['sharedAlbums'][0]['shareInfo']['shareableUrl']
+          if 'sharedAlbums' in shared_albums and shared_albums['sharedAlbums']:
+              shared_album_link = shared_albums['sharedAlbums'][0]['shareInfo']['shareableUrl']
 
-          # Send the message
-          bot = telegram.Bot(token=bot_token)
-          message = f"🎉 Check out my new shared album on Google Photos: {shared_album_link}"
-          bot.send_message(chat_id=chat_id, text=message)
+              # Send the message
+              bot = telegram.Bot(token=bot_token)
+              message = f"🎉 Check out my new shared album on Google Photos: {shared_album_link}"
+              bot.send_message(chat_id=chat_id, text=message)
+          else:
+              print("No shared albums found.")
           EOF
