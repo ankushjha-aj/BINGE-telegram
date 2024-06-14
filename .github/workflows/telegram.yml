@@ -24,8 +24,9 @@ jobs:
       - name: Create credentials.json
         run: |
           echo "${{ secrets.GOOGLE_CREDENTIALS_JSON }}" > credentials.json
+          cat credentials.json  # Print the credentials.json to confirm it was created correctly
 
-      - name: Debug Secrets 
+      - name: Debug Secrets
         run: |
           echo "GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}"
           echo "GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}"
@@ -84,5 +85,5 @@ jobs:
               message = f"🎉 Check out my new shared album on Google Photos: {shared_album_link}"
               bot.send_message(chat_id=chat_id, text=message)
           else:
-              print("No shared albums found.") 
+              print("No shared albums found.")
           EOF
