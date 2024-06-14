@@ -23,19 +23,19 @@ jobs:
       - name: Install Dependencies
         run: pip install python-telegram-bot requests google-auth google-auth-oauthlib google-api-python-client
 
+      - name: Debug Secrets 
+        run: |
+          echo "GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}"
+          echo "GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}"
+          echo "GOOGLE_REFRESH_TOKEN: ${{ secrets.GOOGLE_REFRESH_TOKEN }}"
+          echo "TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}"
+          echo "TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}"
+
       - name: Authenticate with Google Photos
         env:
           GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
           GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
           GOOGLE_REFRESH_TOKEN: ${{ secrets.GOOGLE_REFRESH_TOKEN }}
-          
-      - name: Debug Secrets
-        run: |
-          echo "GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}"
-          echo "GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}"
-          echo "GOOGLE_REFRESH_TOKEN: ${{secrets.GOOGLE_REFRESH_TOKEN}}
-          
-      - name: Run File
         run: |
           python - <<EOF
           import os
@@ -60,7 +60,6 @@ jobs:
                       },
                       ['https://www.googleapis.com/auth/photoslibrary.readonly'])
                   creds = flow.run_local_server(port=0)
-                  print("Refresh Token:", creds.refresh_token)
               with open('token.json', 'w') as token:
                   token.write(creds.to_json())
 
