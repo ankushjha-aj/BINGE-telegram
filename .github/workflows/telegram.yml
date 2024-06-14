@@ -49,7 +49,7 @@ jobs:
               if creds and creds.expired and creds.refresh_token:
                   creds.refresh(Request())
               else:
-                  flow = InstalledAppFlow.from_client_config(
+                  flow = InstalledAppFlow.from_client_secrets_file(
                       {
                         "installed": {
                           "client_id": os.environ["GOOGLE_CLIENT_ID"],
