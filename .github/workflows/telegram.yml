@@ -46,7 +46,7 @@ jobs:
           credentials = service_account.Credentials.from_service_account_info(credentials_info)
 
           # Get the link of the most recent shared album
-          photos_service = build('photoslibrary', 'v1', credentials=credentials)
+          photos_service = discovery.build( 'photoslibrary','v1',credentials=credentials,discoveryServiceUrl='https://photoslibrary.googleapis.com/$discovery/rest?version=v1')
           shared_albums = photos_service.sharedAlbums().list().execute()
           shared_album_link = shared_albums['sharedAlbums'][0]['shareInfo']['shareableUrl']
 
