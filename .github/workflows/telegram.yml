@@ -14,133 +14,80 @@ jobs:
     steps:
       - name: Checkout Code
         uses: actions/checkout@v3
+
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: '3.10'  # Or your preferred Python version
+          python-version: '3.9'
+
       - name: Install Dependencies
         run: pip install python-telegram-bot requests google-auth google-auth-oauthlib google-api-python-client
+
+      - name: Debug Secrets 
+        run: |
+          echo "GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}"
+          echo "GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}"
+          echo "TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}"
+          echo "TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}"
+
       - name: Authenticate with Google Photos
         env:
           GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
           GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
-          GOOGLE_REFRESH_TOKEN: ${{ secrets.GOOGLE_REFRESH_TOKEN }}
+          GOOGLE_REFRESH_TOKEN: ${{ secrets.GOOGLE_REFRESH_TOKEN }} 
+        run: |
+          python - <<EOF
+          import os
+          from google.oauth2.credentials import Credentials
+          from google_auth_oauthlib.flow import InstalledAppFlow
+          from google.auth.transport.requests import Request
+          
+          creds = None
+          if os.path.exists('token.json'):
+              creds = Credentials.from_authorized_user_file('token.json', ['https://www.googleapis.com/auth/photoslibrary.readonly'])
+          if not creds or not creds.valid:
+              if creds and creds.expired and creds.refresh_token:
+                  creds.refresh(Request())
+              else:
+                  flow = InstalledAppFlow.from_client_secrets_file('client_secret.json', 
+                      {
+                        "installed": {
+                          "client_id": os.environ["GOOGLE_CLIENT_ID"],
+                          "client_secret": os.environ["GOOGLE_CLIENT_SECRET"],
+                          "redirect_uris": ["http://localhost"]
+                        }
+                      },
+                  ['https://www.googleapis.com/auth/photoslibrary.readonly'])
+                  creds = flow.run_local_server(port=0)
+              with open('token.json', 'w') as token:
+                  token.write(creds.to_json())
+
+          EOF
+      - name: Send Telegram Message
+        env:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
         run: |
           python - <<EOF
           import os
           import telegram
-          from google.oauth2.credentials import Credentials
           from googleapiclient.discovery import build
+          from google.oauth2.credentials import Credentials
 
-          def authenticate_google_photos():
-              creds = None
-              if os.path.exists('token.json'):
-                  creds = Credentials.from_authorized_user_file('token.json', ['https://www.googleapis.com/auth/photoslibrary.readonly'])
-              if not creds or not creds.valid:
-                  if creds and creds.expired and creds.refresh_token:
-                      creds.refresh(Request())
-                  else:
-                      flow = InstalledAppFlow.from_client_secrets_file('client_secret.json', ['https://www.googleapis.com/auth/photoslibrary.readonly'])
-                      creds = flow.run_local_server(port=0)
-                  with open('token.json', 'w') as token:
-                      token.write(creds.to_json())
-              return creds
+          # Telegram credentials
+          bot_token = os.environ['TELEGRAM_BOT_TOKEN']
+          chat_id = os.environ['TELEGRAM_CHAT_ID']
 
-          def main():
-              creds = authenticate_google_photos()
-              service = build('photoslibrary', 'v1', credentials=creds)
+          # Google Photos credentials (load the token)
+          creds = Credentials.from_authorized_user_file('token.json', ['https://www.googleapis.com/auth/photoslibrary.readonly'])
+          photos_service = build('photoslibrary', 'v1', credentials=creds)
 
-              # Get shared albums (check if any exist)
-              shared_albums = service.sharedAlbums().list().execute().get('sharedAlbums', [])
-              
-              if shared_albums:
-                  shared_album_link = shared_albums[0]['shareInfo']['shareableUrl']
-                  
-                  bot = telegram.Bot(token=os.environ['TELEGRAM_BOT_TOKEN'])
-                  message = f"📸 New shared album on Google Photos:\n{shared_album_link}"
-                  bot.send_message(chat_id=os.environ['TELEGRAM_CHAT_ID'], text=message)
-              
-              else:
-                  print("No shared albums found.")
+          # Get the link of the most recent shared album
+          shared_albums = photos_service.sharedAlbums().list().execute()
+          shared_album_link = shared_albums['sharedAlbums'][0]['shareInfo']['shareableUrl']
 
-          if __name__ == "__main__":
-              main()
+          # Send the message
+          bot = telegram.Bot(token=bot_token)
+          message = f"🎉 Check out my new shared album on Google Photos: {shared_album_link}"
+          bot.send_message(chat_id=chat_id, text=message)
           EOF
-
-# jobs:
-#   send_telegram_message:
-#     runs-on: ubuntu-latest
-#     steps:
-#       - name: Checkout Code
-#         uses: actions/checkout@v3
-
-#       - name: Set up Python
-#         uses: actions/setup-python@v4
-#         with:
-#           python-version: '3.9'
-
-#       - name: Install Dependencies
-#         run: pip install python-telegram-bot requests google-auth google-auth-oauthlib google-api-python-client
-
-#       - name: Debug Secrets 
-#         run: |
-#           echo "GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}"
-#           echo "GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}"
-#           echo "TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}"
-#           echo "TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}"
-
-#       - name: Authenticate with Google Photos
-#         env:
-#           GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
-#           GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
-#           GOOGLE_REFRESH_TOKEN: ${{ secrets.GOOGLE_REFRESH_TOKEN }} 
-#         run: |
-#           python - <<EOF
-#           import os
-#           from google.oauth2.credentials import Credentials
-#           from google_auth_oauthlib.flow import InstalledAppFlow
-#           from google.auth.transport.requests import Request
-          
-#           creds = None
-#           if os.path.exists('token.json'):
-#               creds = Credentials.from_authorized_user_file('token.json', ['https://www.googleapis.com/auth/photoslibrary.readonly'])
-#           if not creds or not creds.valid:
-#               if creds and creds.expired and creds.refresh_token:
-#                   creds.refresh(Request())
-#               else:
-#                   flow = InstalledAppFlow.from_client_secrets_file('client_secret.json', ['https://www.googleapis.com/auth/photoslibrary.readonly'])
-#                   creds = flow.run_local_server(port=0)
-#               with open('token.json', 'w') as token:
-#                   token.write(creds.to_json())
-
-#           EOF
-#       - name: Send Telegram Message
-#         env:
-#           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
-#           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
-#         run: |
-#           python - <<EOF
-#           import os
-#           import telegram
-#           from googleapiclient.discovery import build
-#           from google.oauth2.credentials import Credentials
-
-#           # Telegram credentials
-#           bot_token = os.environ['TELEGRAM_BOT_TOKEN']
-#           chat_id = os.environ['TELEGRAM_CHAT_ID']
-
-#           # Google Photos credentials (load the token)
-#           creds = Credentials.from_authorized_user_file('token.json', ['https://www.googleapis.com/auth/photoslibrary.readonly'])
-#           photos_service = build('photoslibrary', 'v1', credentials=creds)
-
-#           # Get the link of the most recent shared album
-#           shared_albums = photos_service.sharedAlbums().list().execute()
-#           shared_album_link = shared_albums['sharedAlbums'][0]['shareInfo']['shareableUrl']
-
-#           # Send the message
-#           bot = telegram.Bot(token=bot_token)
-#           message = f"🎉 Check out my new shared album on Google Photos: {shared_album_link}"
-#           bot.send_message(chat_id=chat_id, text=message)
-#           EOF
