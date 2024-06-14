@@ -1,0 +1,57 @@
+name: Share Google Photos Album to Telegram
+
+on:
+  push:
+    branches:
+      - main
+  # schedule:
+  #   - cron: '0 */4 * * *'  # Every 4 hours (adjust as needed)
+  # workflow_dispatch:  # Allow manual triggering
+
+jobs:
+  send_telegram_message:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+
+      - name: Install Dependencies
+        run: pip install python-telegram-bot requests google-api-python-client
+
+      - name: Send Telegram Message
+        env:
+          TELEGRAM_BOT_TOKEN: 6384770295:AAH_FlqDRXL49GM8eR5yH_WJ-K24Dsm5B4
+          TELEGRAM_CHAT_ID: 777052486
+          GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_CREDENTIALS }}
+        run: |
+          python - <<EOF
+          import os
+          import telegram
+          import requests
+          import json
+          from google.oauth2 import service_account
+          from googleapiclient.discovery import build
+
+          # Telegram credentials
+          bot_token = os.environ['TELEGRAM_BOT_TOKEN']
+          chat_id = os.environ['TELEGRAM_CHAT_ID']
+
+          # Google Photos credentials
+          credentials_info = json.loads(os.environ['GOOGLE_CREDENTIALS'])
+          credentials = service_account.Credentials.from_service_account_info(credentials_info)
+
+          # Get the link of the most recent shared album
+          photos_service = build('photoslibrary', 'v1', credentials=credentials)
+          shared_albums = photos_service.sharedAlbums().list().execute()
+          shared_album_link = shared_albums['sharedAlbums'][0]['shareInfo']['shareableUrl']
+
+          # Send the message
+          bot = telegram.Bot(token=bot_token)
+          message = f"🎉 Check out my new shared album on Google Photos: {shared_album_link}"
+          bot.send_message(chat_id=chat_id, text=message)
+          EOF
