@@ -50,12 +50,6 @@ jobs:
                   creds.refresh(Request())
               else:
                   flow = InstalledAppFlow.from_client_secrets_file('client_secret.json', ['https://www.googleapis.com/auth/photoslibrary.readonly'])
-                      {
-                        "installed": {
-                          "client_id": os.environ["GOOGLE_CLIENT_ID"],
-                          "client_secret": os.environ["GOOGLE_CLIENT_SECRET"],
-                          "redirect_uris": ["http://localhost"]
-                        }  
                   creds = flow.run_local_server(port=0)
               with open('token.json', 'w') as token:
                   token.write(creds.to_json())
