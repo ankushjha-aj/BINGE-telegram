@@ -84,5 +84,5 @@ jobs:
               message = f"🎉 Check out my new shared album on Google Photos: {shared_album_link}"
               bot.send_message(chat_id=chat_id, text=message)
           else:
-              print("No shared albums found.")
+              print("No shared albums found.") 
           EOF
