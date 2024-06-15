@@ -41,7 +41,7 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: prev_msg_artifact  # Artifact name
-          path: prev_msg.txt   
+          path: scripts/prev_msg.txt   
 
   download_artifact:  # New job to download the artifact before running the script again
     needs: send-messages   # This job depends on the previous job
