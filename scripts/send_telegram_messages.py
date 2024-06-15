@@ -45,7 +45,7 @@ def send_to_telegram(new_msg):
 
 # --- Main Execution ---
 # Replace this with the actual message URL
-new_msg = 'https://photos.app.goo.gl/abcdefg12345'  
+new_msg = 'https://photos.app.goo.gl/abcdefg123466'  
 
 send_to_telegram(new_msg)
 print('Script completed!')
