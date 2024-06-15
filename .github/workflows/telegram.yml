@@ -1,49 +1,73 @@
-name: Share Google Photos Album to Telegram
-
+name: Send Telegram Messages
 on:
-  # push:
-  #   branches:
-  #     - main
-  workflow_dispatch:     # Allow manual triggering
+  push:
+    branches: [ main ]  # Change to your branch if needed
 
 jobs:
-  send_telegram_message:
+  send-messages:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout Code
-        uses: actions/checkout@v3
+      - uses: actions/checkout@v3
 
-      - name: Set up Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: '3.9'
+      - name: Install dependencies
+        run: pip install python-telegram-bot
 
-      - name: Install Dependencies
-        run:  python -m pip install telebot
+      - name: Set secret variables
+        env:
+          TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
+          CHANNEL_ID: ${{ secrets.CHANNEL_ID }}
+        run: echo "Secrets are set"  # Optional step to verify
+
+      - name: Run Python script
+        run: python scripts/send_telegram_messages.py  # Replace with your script location
+
+
+# name: Share Google Photos Album to Telegram
+
+# on:
+#   # push:
+#   #   branches:
+#   #     - main
+#   workflow_dispatch:     # Allow manual triggering
+
+# jobs:
+#   send_telegram_message:
+#     runs-on: ubuntu-latest
+#     steps:
+#       - name: Checkout Code
+#         uses: actions/checkout@v3
+
+#       - name: Set up Python
+#         uses: actions/setup-python@v4
+#         with:
+#           python-version: '3.9'
+
+#       - name: Install Dependencies
+#         run:  python -m pip install telebot
     
-      - name: Debug Secrets
-        run: |
-          echo "TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}"
-          echo "TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}"
+#       - name: Debug Secrets
+#         run: |
+#           echo "TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}"
+#           echo "TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}"
 
-      # - name: Install Telegram Action
-      #   uses: appleboy/telegram-action@master
-      #   with:
-      #     token: ${{ secrets.TELEGRAM_BOT_TOKEN }}
-      #     to: ${{ secrets.TELEGRAM_CHANNEL_ID }}
-      #     message: "New push to ${{ github.repository }} repository!"
+#       # - name: Install Telegram Action
+#       #   uses: appleboy/telegram-action@master
+#       #   with:
+#       #     token: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+#       #     to: ${{ secrets.TELEGRAM_CHANNEL_ID }}
+#       #     message: "New push to ${{ github.repository }} repository!"
 
-      - name: Authenticate with Telegram And Send Message 
-        run: |
-          python - <<EOF
-          import telebot
-          bot_token = '6384770295:AAH_FlqDRXL49GM8eR5yH_WJ-K24Dsm5B4g'
-          channel_id = '-1001715673902'
-          message = 'Working on Binge+ to make it better '
-          bot = telebot.TeleBot(bot_token)
-          bot.send_message(channel_id, message)
-          print('Message sent successfully!')
+#       - name: Authenticate with Telegram And Send Message 
+#         run: |
+#           python - <<EOF
+#           import telebot
+#           bot_token = '6384770295:AAH_FlqDRXL49GM8eR5yH_WJ-K24Dsm5B4g'
+#           channel_id = '-1001715673902'
+#           message = 'Working on Binge+ to make it better '
+#           bot = telebot.TeleBot(bot_token)
+#           bot.send_message(channel_id, message)
+#           print('Message sent successfully!')
           
-          EOF
+#           EOF
 
      
