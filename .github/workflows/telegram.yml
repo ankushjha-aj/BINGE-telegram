@@ -30,8 +30,20 @@ jobs:
           source: "."  
           target: "/var/www/html/telegram_automation" # Target directory on GCP VM
 
-      - name: Install Dependencies
-        run: python -m pip install telebot 
+      - name: Install Dependencies on VM
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.GCP_VM_IP_ADDRESS }}
+          username: ${{ secrets.GCP_VM_USERNAME }}
+          port: 22
+          key: ${{ secrets.GCP_VM_SSH_PRIVATE_KEY }}
+          script: |
+            sudo apt-get update
+            sudo apt-get install python3-pip
+            pip3 install pyTelegramBotAPI
+            
+      # - name: Install Dependencies
+      #   run: python -m pip install telebot 
 
       - name: Debug Secrets
         run: |
