@@ -13,8 +13,10 @@ jobs:
       - uses: actions/checkout@v3
 
       - name: Install Dependencies
-        run:  python -m pip install telebot
-
+        run: |
+          python -m pip install telebot
+          pip install -r requirements.txt
+          
       # - name: Install dependencies
       #   run: pip install python-telegram-bot
 
@@ -23,39 +25,17 @@ jobs:
           echo "TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}"
           echo "TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}"
 
-      # - name: Run Python script
-      #   run: python scripts/send_telegram_messages.py  # Replace with your script location
-      #   env:  # Set environment variables from secrets
-      #     TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
-      #     CHANNEL_ID: ${{ secrets.TELEGRAM_CHAT_ID}}
-
-      - name: Run the script
-        env:
+      - name: Run Python script
+        run: python send_telegram_message.py  # Replace with your script location
+        env:  # Set environment variables from secrets
           TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
-          CHANNEL_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
-          PREV_MSG: ${{ steps.download_artifact.outputs.prev_msg }}
-        run: python scripts/send_telegram_messages.py 
+          CHANNEL_ID: ${{ secrets.TELEGRAM_CHAT_ID}}
 
-      - name: Upload the previous message as an artifact
-        if: always() # Always run, even if previous steps fail
-        uses: actions/upload-artifact@v3
-        with:
-          name: prev_msg_artifact  # Artifact name
-          path: scripts/prev_msg.txt   
 
-  download_artifact:  # New job to download the artifact before running the script again
-    needs: send-messages   # This job depends on the previous job
-    runs-on: ubuntu-latest
-    steps:
-      - name: Download previous message artifact
-        uses: actions/download-artifact@v3
-        with:
-          name: prev_msg_artifact
-        
-      - name: Output prev_msg
-        id: download_artifact
-        run: |
-          echo "prev_msg=$(cat prev_msg.txt)" >> $GITHUB_OUTPUT
+
+
+
+
 
 
 
