@@ -15,15 +15,16 @@ jobs:
       # - name: Install dependencies
       #   run: pip install python-telegram-bot
 
-      - name: Set secret variables
-        env:
-          TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
-          CHANNEL_ID: ${{ secrets.TELEGRAM_CHAT_ID}}
-        run: echo "Secrets are set"  # Optional step to verify
+      - name: Debug Secrets
+        run: |
+          echo "TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}"
+          echo "TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}"
 
       - name: Run Python script
         run: python scripts/send_telegram_messages.py  # Replace with your script location
-
+        env:  # Set environment variables from secrets
+          TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          CHANNEL_ID: ${{ secrets.TELEGRAM_CHAT_ID}}
 
 # name: Share Google Photos Album to Telegram
 
