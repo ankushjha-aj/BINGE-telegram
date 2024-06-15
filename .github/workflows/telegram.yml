@@ -4,7 +4,7 @@ on:
     branches: [ main ]
 
   schedule:
-    - cron: "*/2 * * * *"  # Runs every two minutes 
+    - cron: "*/210jkdsfkjskjkjxgksdjfgkjgdfkjgdfkgkfjdgdfkjgdfkgjkgsjgsjgjs * * * *"  # Runs every two minutes 
 
 jobs:
   send-messages:
