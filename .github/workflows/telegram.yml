@@ -1,9 +1,9 @@
 name: Share Google Photos Album to Telegram
 
 on:
-  push:
-    branches:
-      - main
+  # push:
+  #   branches:
+  #     - main
   workflow_dispatch:     # Allow manual triggering
 
 jobs:
@@ -26,12 +26,12 @@ jobs:
           echo "TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}"
           echo "TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}"
 
-      - name: Install Telegram Action
-        uses: appleboy/telegram-action@master
-        with:
-          token: ${{ secrets.TELEGRAM_BOT_TOKEN }}
-          to: ${{ secrets.TELEGRAM_CHANNEL_ID }}
-          message: "New push to ${{ github.repository }} repository!"
+      # - name: Install Telegram Action
+      #   uses: appleboy/telegram-action@master
+      #   with:
+      #     token: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+      #     to: ${{ secrets.TELEGRAM_CHANNEL_ID }}
+      #     message: "New push to ${{ github.repository }} repository!"
 
       - name: Authenticate with Telegram And Send Message 
         run: |
