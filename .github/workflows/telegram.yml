@@ -17,7 +17,7 @@ jobs:
           username: ${{ secrets.GCP_VM_USERNAME }}
           key: ${{ secrets.GCP_VM_PRIVATE_KEY }}
           source: "."  
-          target: "/root/telegram_automation"  # Target directory on GCP VM
+          target: "/var/www/html/telegram_automation"  # Target directory on GCP VM
           
 # name: Send Telegram Messages
 # on:
