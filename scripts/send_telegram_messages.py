@@ -8,17 +8,12 @@ logging.basicConfig(
     format='%(asctime)s - %(levelname)s - %(message)s'
 )
 
-# Initialize prev_msg from a file or default
-prev_msg_file = "prev_msg.txt"  # Use a file to store prev_msg
 
-# Load previous message from the file
-if os.path.exists(prev_msg_file):
-    with open(prev_msg_file, "r") as f:
-        prev_msg = f.read().strip()
-else:
-    prev_msg = None 
+# The following lines were replaced by environment variables
+# prev_msg_file = "prev_msg.txt"  # Use a file to store prev_msg
+prev_msg = os.getenv('PREV_MSG')  # Load prev_msg as an environment variable
 
-def send_to_telegram(new_msg, prev_msg_file=prev_msg_file):
+def send_to_telegram(new_msg):
     """
     Sends a new message to Telegram and updates the previous message record.
     """
@@ -37,9 +32,8 @@ def send_to_telegram(new_msg, prev_msg_file=prev_msg_file):
             sent_message = bot.send_message(channel_id, new_msg)
             logging.info(f"Message sent successfully: {sent_message.message_id}")
 
-            # Update the previous message file
-            with open(prev_msg_file, "w") as f:
-                f.write(new_msg)
+            # Update the previous message variable (you may need extra workflow steps to store this for future runs)
+            # os.environ['PREV_MSG'] = new_msg 
         else:
             logging.info("No new message to send.")
 
@@ -53,8 +47,9 @@ def send_to_telegram(new_msg, prev_msg_file=prev_msg_file):
 # Replace this with the actual message URL
 new_msg = 'https://photos.app.goo.gl/abcdefg12345'  
 
-send_to_telegram(new_msg, prev_msg_file)
+send_to_telegram(new_msg)
 print('Script completed!')
+
 
 
 # import os
