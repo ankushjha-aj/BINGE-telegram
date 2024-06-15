@@ -17,21 +17,22 @@ def load_previous_messages():
   except FileNotFoundError:
     return []
 
-# Function to save the current messages
+# Function to save the current messages (only when new messages are sent)
 def save_current_messages(messages):
-  with open(PERSISTENCE_FILE, 'w') as f:
-    json.dump(messages, f)
+  if new_messages:  # Save only if new messages were sent
+    with open(PERSISTENCE_FILE, 'w') as f:
+      json.dump(messages, f)
 
 # Define the messages list
 messages = [
   'This is the first message.',
-  'This is the second message to check automation'  # Modify or add new messages here
+  'This is the second message to check automation'
 ]
 
 # Load previously sent messages
 previous_messages = load_previous_messages()
 
-# Identify new messages
+# Identify new messages (consider deeper comparison for order or slight changes)
 new_messages = [message for message in messages if message not in previous_messages]
 
 # Create a Telegram bot object
@@ -42,10 +43,9 @@ if new_messages:
   for message in new_messages:
     bot.send_message(channel_id, message)
     print(f"Sent new message: {message}")
-  save_current_messages(messages)  # Update the persistence file with the current messages
+  save_current_messages(messages)  # Update persistence file only for new messages
 else:
   print("No new messages found.")
-
 
 # import telebot
 # import os 
