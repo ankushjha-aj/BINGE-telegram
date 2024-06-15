@@ -1,7 +1,10 @@
 name: Send Telegram Messages
 on:
   push:
-    branches: [ main ]  # Change to your branch if needed
+    branches: [ main ]
+
+  schedule:
+    - cron: "*/2 * * * *"  # Runs every two minutes 
 
 jobs:
   send-messages:
