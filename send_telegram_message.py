@@ -31,7 +31,10 @@ def send_to_telegram(new_msg, prev_msg_file="prev_msg.txt"):
         # Compare messages
         if new_msg != prev_msg:
             # Send to Telegram... (your existing code)
-
+            bot = telebot.TeleBot(bot_token)
+            sent_message = bot.send_message(channel_id, new_msg)
+            logging.info(f"Message sent successfully: {sent_message.message_id}")
+            
             # Write the new message to file
             with open(prev_msg_file, "w") as f:
                 f.write(new_msg)
