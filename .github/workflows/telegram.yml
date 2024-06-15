@@ -1,35 +1,56 @@
 name: Send Telegram Messages
+
 on:
   push:
-    branches: [ telegram_automation ]
-
-  # schedule:
-  #   - cron: "0 0 */3 * *"  # Runs every 3 Days 
+    branches:
+      - telegram_automation  # Change this to your main branch name  
 
 jobs:
-  send-messages:
+  deploy:
     runs-on: ubuntu-latest
+
     steps:
-      - uses: actions/checkout@v3
-
-      - name: Install Dependencies
-        run: |
-          # python -m pip install telebot
-          pip install -r requirements.txt
+      - name: Copy files to GCP VM (GITHUB -- PYTHON)
+        uses: appleboy/scp-action@master 
+        with:
+          host: ${{ secrets.GCP_VM_HOST1 }}
+          username: ${{ secrets.GCP_VM_USERNAME }}
+          key: ${{ secrets.GCP_VM_PRIVATE_KEY }}
+          source: "."  
+          target: "/root/telegram_automation"  # Target directory on GCP VM
           
-      # - name: Install dependencies
-      #   run: pip install python-telegram-bot
+# name: Send Telegram Messages
+# on:
+#   push:
+#     branches: [ telegram_automation ]
 
-      - name: Debug Secrets
-        run: |
-          echo "TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}"
-          echo "TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}"
+#   # schedule:
+#   #   - cron: "0 0 */3 * *"  # Runs every 3 Days 
 
-      - name: Run Python script
-        run: python send_telegram_message.py  # Replace with your script location
-        env:  # Set environment variables from secrets
-          TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
-          CHANNEL_ID: ${{ secrets.TELEGRAM_CHAT_ID}}
+# jobs:
+#   send-messages:
+#     runs-on: ubuntu-latest
+#     steps:
+#       - uses: actions/checkout@v3
+
+#       - name: Install Dependencies
+#         run: |
+#           # python -m pip install telebot
+#           pip install -r requirements.txt
+          
+#       # - name: Install dependencies
+#       #   run: pip install python-telegram-bot
+
+#       - name: Debug Secrets
+#         run: |
+#           echo "TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}"
+#           echo "TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}"
+
+#       - name: Run Python script
+#         run: python send_telegram_message.py  # Replace with your script location
+#         env:  # Set environment variables from secrets
+#           TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+#           CHANNEL_ID: ${{ secrets.TELEGRAM_CHAT_ID}}
 
 
 
