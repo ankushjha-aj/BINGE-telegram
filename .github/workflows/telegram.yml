@@ -31,8 +31,8 @@ jobs:
 
       - name: Run the script
         env:
-          TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
-          CHANNEL_ID: ${{ secrets.CHANNEL_ID }}
+          TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          CHANNEL_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
           PREV_MSG: ${{ steps.download_artifact.outputs.prev_msg }}
         run: python scripts/send_telegram_messages.py 
 
