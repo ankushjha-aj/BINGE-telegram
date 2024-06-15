@@ -20,27 +20,28 @@ else:
 
 
 def send_to_telegram(new_msg, prev_msg_file="prev_msg.txt"):
-    """
-    Sends a new message to Telegram and updates the previous message record.
-    """
-
-    bot_token = os.getenv('TELEGRAM_TOKEN')
-    channel_id = os.getenv('CHANNEL_ID')
-
-    if not bot_token or not channel_id:
-        logging.error("Missing TELEGRAM_TOKEN or CHANNEL_ID environment variables!")
-        return
-
     try:
+        # Read previous message (if the file exists)
+        if os.path.exists(prev_msg_file):
+            with open(prev_msg_file, "r") as f:
+                prev_msg = f.read().strip()
+        else:
+            prev_msg = None
+
+        # Compare messages
         if new_msg != prev_msg:
-            bot = telebot.TeleBot(bot_token)
+            # Send to Telegram... (your existing code)
 
-            sent_message = bot.send_message(channel_id, new_msg)
-            logging.info(f"Message sent successfully: {sent_message.message_id}")
-
-            # Update the previous message file
+            # Write the new message to file
             with open(prev_msg_file, "w") as f:
                 f.write(new_msg)
+        else:
+            logging.info("No new message to send.")
+
+    except FileNotFoundError:
+        logging.warning(f"File not found: {prev_msg_file}. Creating a new one.")
+        with open(prev_msg_file, "w") as f:
+            f.write(new_msg)
         else:
             logging.info("No new message to send.")
 
