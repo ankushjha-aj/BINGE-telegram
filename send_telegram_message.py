@@ -52,5 +52,5 @@ def send_to_telegram(new_msg, prev_msg_file="prev_msg.txt"):
 # --- Main Execution ---
 if __name__ == "__main__":
     # Get the new message (you'll adapt how this is obtained)
-    new_msg = 'https://photos.app.goo.gl/abcdefg123'  
+    new_msg = 'https://photos.app.goo.gl/abcdefg123df'  
     send_to_telegram(new_msg, prev_msg_file)
