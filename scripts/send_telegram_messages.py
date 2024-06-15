@@ -1,6 +1,7 @@
 import telebot
 import os
 import json
+from difflib import SequenceMatcher
 
 # Retrieve secrets from environment variables
 bot_token = os.environ.get('TELEGRAM_TOKEN')
@@ -32,8 +33,14 @@ messages = [
 # Load previously sent messages
 previous_messages = load_previous_messages()
 
-# Identify new messages (consider deeper comparison for order or slight changes)
-new_messages = [message for message in messages if message not in previous_messages]
+# Function to compare messages (consider customizing the similarity threshold)
+def message_similar(message1, message2):
+  matcher = SequenceMatcher(None, message1, message2)
+  ratio = matcher.quick_ratio()
+  return ratio >= 0.95  # Adjust threshold for desired similarity
+
+# Identify new messages (consider deeper comparison)
+new_messages = [message for message in messages if not any(message_similar(m, prev) for prev in previous_messages)]
 
 # Create a Telegram bot object
 bot = telebot.TeleBot(bot_token)
@@ -46,6 +53,7 @@ if new_messages:
   save_current_messages(messages)  # Update persistence file only for new messages
 else:
   print("No new messages found.")
+
 
 # import telebot
 # import os 
