@@ -38,9 +38,11 @@ jobs:
           key: ${{ secrets.GCP_VM_PRIVATE_KEY }}
           port: 22
           script: |
-            sudo apt-get update
-            sudo apt-get install python3-pip
-            pip3 install pyTelegramBotAPI
+            sudo apt-get update  
+            sudo apt install python3-venv  
+            python3 -m venv /var/www/html/telegram_automation/venv  
+            source /var/www/html/telegram_automation/venv/bin/activate  
+            pip3 install pyTelegramBotAPI 
             
       # - name: Install Dependencies
       #   run: python -m pip install telebot 
@@ -57,6 +59,7 @@ jobs:
           username: ${{ secrets.GCP_VM_USERNAME }}
           key: ${{ secrets.GCP_VM_PRIVATE_KEY }}
           script: |
+            source /var/www/html/telegram_automation/venv/bin/activate
             cd /var/www/html/telegram_automation
             python3 send_telegram_message.py   
 
