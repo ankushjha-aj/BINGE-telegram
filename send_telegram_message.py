@@ -42,8 +42,6 @@ def send_to_telegram(new_msg, prev_msg_file="prev_msg.txt"):
         logging.warning(f"File not found: {prev_msg_file}. Creating a new one.")
         with open(prev_msg_file, "w") as f:
             f.write(new_msg)
-        else:
-            logging.info("No new message to send.")
 
     except telebot.apihelper.ApiException as e:
         logging.error(f"Telegram API Error: {e}")
