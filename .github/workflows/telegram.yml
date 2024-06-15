@@ -23,11 +23,44 @@ jobs:
           echo "TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}"
           echo "TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}"
 
-      - name: Run Python script
-        run: python scripts/send_telegram_messages.py  # Replace with your script location
-        env:  # Set environment variables from secrets
-          TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
-          CHANNEL_ID: ${{ secrets.TELEGRAM_CHAT_ID}}
+      # - name: Run Python script
+      #   run: python scripts/send_telegram_messages.py  # Replace with your script location
+      #   env:  # Set environment variables from secrets
+      #     TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+      #     CHANNEL_ID: ${{ secrets.TELEGRAM_CHAT_ID}}
+
+      - name: Run the script
+        env:
+          TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
+          CHANNEL_ID: ${{ secrets.CHANNEL_ID }}
+          PREV_MSG: ${{ steps.download_artifact.outputs.prev_msg }}
+        run: python scripts/send_telegram_messages.py 
+
+      - name: Upload the previous message as an artifact
+        if: always() # Always run, even if previous steps fail
+        uses: actions/upload-artifact@v3
+        with:
+          name: prev_msg_artifact  # Artifact name
+          path: prev_msg.txt   
+
+  download_artifact:  # New job to download the artifact before running the script again
+    needs: send-messages   # This job depends on the previous job
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download previous message artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: prev_msg_artifact
+        
+      - name: Output prev_msg
+        id: download_artifact
+        run: |
+          echo "prev_msg=$(cat prev_msg.txt)" >> $GITHUB_OUTPUT
+
+
+
+
+
 
 # name: Share Google Photos Album to Telegram
 
