@@ -7,9 +7,7 @@ channel_id = os.environ.get('CHANNEL_ID')
 
 # Define multiple messages
 messages = [
-    'GAANTH (2024)
-
-https://photos.app.goo.gl/chxAPKxo3ecffK4KA',
+    'GAANTH --> https://photos.app.goo.gl/chxAPKxo3ecffK4KA',
 ]
 
 # Create a Telegram bot object
