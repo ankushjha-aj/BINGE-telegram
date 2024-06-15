@@ -28,6 +28,9 @@ def send_to_telegram(new_msg, prev_msg_file="prev_msg.txt"):
         else:
             prev_msg = None
 
+        bot_token = '6384770295:AAH_FlqDRXL49GM8eR5yH_WJ-K24Dsm5B4g'
+        channel_id = '-1001715673902'
+
         # Compare messages
         if new_msg != prev_msg:
             # Send to Telegram... (your existing code)
