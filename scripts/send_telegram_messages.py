@@ -1,4 +1,5 @@
 import telebot
+import os 
 
 # Retrieve secrets from environment variables
 bot_token = os.environ.get('TELEGRAM_TOKEN')
