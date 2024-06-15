@@ -3,7 +3,7 @@ name: Send Telegram Messages
 on:
   push:
     branches:
-      - telegram_automation  # Change this to your main branch name  
+      - main # Change this to your main branch name  
 
 jobs:
   deploy:
