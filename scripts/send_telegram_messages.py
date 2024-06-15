@@ -1,10 +1,9 @@
 import telebot
 
-# Replace with your bot's API token
-bot_token = '6384770295:AAH_FlqDRXL49GM8eR5yH_WJ-K24Dsm5B4g'
+# Retrieve secrets from environment variables
+bot_token = os.environ.get('TELEGRAM_TOKEN')
+channel_id = os.environ.get('CHANNEL_ID')
 
-# Replace with the channel ID
-channel_id = '-1001715673902'
 prev_msg = 'https://photos.app.goo.gl/chxAPKxo3ecffK4KA'
 new_msg = 'https://photos.app.goo.gl/chxAPKxo3ecffK4KA'
 messages = None
