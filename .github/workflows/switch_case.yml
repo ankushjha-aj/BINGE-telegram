@@ -23,17 +23,14 @@ jobs:
           case "${{ inputs.CERT_TYPE }}" in
             tls)
               echo "This is case tls"
-              # Your commands for handling tls type
               ;;
             server)
               echo "This is case server"
-              # Your commands for handling server type
               ;;
             fullchain)
               echo "This is case Fullchain"
-              # Your commands for handling fullchain type
               ;;
-            *)
+            )
               echo "Unsupported CERT_TYPE: ${{ inputs.CERT_TYPE }}"
               exit 1
               ;;
