@@ -20,10 +20,13 @@ jobs:
       - name: Copy cert files to ssl_certs
         run: |-
           case "${{ inputs.CERT_TYPE }}" in
-            "tls")
+            tls)
              run: echo "This is case tls"
-            "server")
+             ;
+            server)
              run: echo "This is case server"
-            "fullchain")
+             ;
+            fullchain)
              run: echo "This is case Fullchain"
+             ;
           esac
