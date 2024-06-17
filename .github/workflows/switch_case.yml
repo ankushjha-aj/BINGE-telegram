@@ -11,14 +11,7 @@ jobs:
   Deploy_Certs_To_Infrastructure:
     runs-on: ubuntu-latest 
     steps:
-    
-       # Download certs from Artifacts
-      - name: Download directory certs from Artifact
-        uses: actions/download-artifact@65a9edc5881444af0b9093a5e628f2fe47ea3b2e # v4.1.7
-        with:
-          name: ssl_certs
-          path: ssl_certs
-          
+             
       - name: Prepare certs directory
         run: |-
           rm -rf ssl_certs/* && mkdir -p ssl_certs
