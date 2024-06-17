@@ -8,26 +8,62 @@ on:
         type: string
 
 jobs:
-  Testing_certs:
-    runs-on: ubuntu-latest
+  Deploy_Certs_To_Infrastructure:
+    runs-on: ubuntu-latest 
     steps:
+    
+       # Download certs from Artifacts
+      - name: Download directory certs from Artifact
+        uses: actions/download-artifact@65a9edc5881444af0b9093a5e628f2fe47ea3b2e # v4.1.7
+        with:
+          name: ssl_certs
+          path: ssl_certs
+          
+      - name: Prepare certs directory
+        run: |-
+          rm -rf ssl_certs/* && mkdir -p ssl_certs
+          
       - name: Copy cert files to ssl_certs
-        run: |
+        run: |-
           case "${{ inputs.CERT_TYPE }}" in
             tls)
-              echo "This is case tls"
-              # Replace with your actual commands for handling tls type
+              cp -prf fullchain.pem ssl_certs/tls.crt
+              cp -rpf privkey.pem ssl_certs/tls.key
+              echo "This is cert tls"
               ;;
             server)
-              echo "This is case server"
-              # Replace with your actual commands for handling server type
+              cp -prf fullchain.pem ssl_certs/server.crt
+              cp -rpf privkey.pem ssl_certs/server.key
+              echo "This is cert server"
               ;;
             fullchain)
-              echo "This is case Fullchain"
-              # Replace with your actual commands for handling fullchain type
-              ;;
-            *)
-              echo "Unsupported CERT_TYPE: ${{ inputs.CERT_TYPE }}"
-              exit 1
+              cp -prf fullchain.pem ssl_certs/fullchain.pem
+              cp -rpf privkey.pem ssl_certs/privkey.pem
+              echo "This is cert fullcahin"
               ;;
           esac
+          
+# jobs:
+#   Testing_certs:
+#     runs-on: ubuntu-latest
+#     steps:
+#       - name: Copy cert files to ssl_certs
+#         run: |
+#           case "${{ inputs.CERT_TYPE }}" in
+#             tls)
+#               echo "This is case tls"
+#               # Replace with your actual commands for handling tls type
+#               ;;
+#             server)
+#               echo "This is case server"
+#               # Replace with your actual commands for handling server type
+#               ;;
+#             fullchain)
+#               echo "This is case Fullchain"
+#               # Replace with your actual commands for handling fullchain type
+#               ;;
+#             *)
+#               echo "Unsupported CERT_TYPE: ${{ inputs.CERT_TYPE }}"
+#               exit 1
+#               ;;
+#           esac
