@@ -10,7 +10,7 @@ on:
 jobs:
   Testing_certs:
     runs-on: ubuntu-latest
-      
+    steps:
       - name: Copy cert files to ssl_certs
         run: |
           case "${{ inputs.CERT_TYPE }}" in
