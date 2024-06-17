@@ -17,20 +17,23 @@ jobs:
             echo "Unsupported CERT_TYPE: ${{ inputs.CERT_TYPE }}"
             exit 1
           fi
-          
+      
       - name: Copy cert files to ssl_certs
         run: |
           case "${{ inputs.CERT_TYPE }}" in
             tls)
               echo "This is case tls"
+              # Replace with your actual commands for handling tls type
               ;;
             server)
               echo "This is case server"
+              # Replace with your actual commands for handling server type
               ;;
             fullchain)
               echo "This is case Fullchain"
+              # Replace with your actual commands for handling fullchain type
               ;;
-            )
+            *)
               echo "Unsupported CERT_TYPE: ${{ inputs.CERT_TYPE }}"
               exit 1
               ;;
