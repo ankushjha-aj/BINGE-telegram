@@ -1,0 +1,29 @@
+name: Reusable Case Handler
+
+on:
+  workflow_call:
+    inputs:
+      CERT_TYPE:
+        required: true
+        type: string
+
+jobs:
+  Testing_certs:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Validate CERT_TYPE input
+        run: |-
+          if [[ "${{ inputs.CERT_TYPE }}" != "tls" && "${{ inputs.CERT_TYPE }}" != "server" && "${{ inputs.CERT_TYPE }}" != "fullchain" ]]; then
+            echo "Unsupported CERT_TYPE: ${{ inputs.CERT_TYPE }}"
+            exit 1
+          fi
+      - name: Copy cert files to ssl_certs
+        run: |-
+          case "${{ inputs.CERT_TYPE }}" in
+            tls)
+             run: echo "This is case tls"
+            server)
+             run: echo "This is case server"
+            fullchain)
+             run: echo "This is case Fullchain"
+          esac
