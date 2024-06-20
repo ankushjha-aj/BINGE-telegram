@@ -52,7 +52,7 @@ def send_to_telegram(new_msg, prev_msg_file=prev_msg_file):
 
 # --- Main Execution ---
 # Replace this with the actual message URL
-new_msg = 'Hello This is telegram Automated msg'
+new_msg = 'https://photos.app.goo.gl/QeipdK3N1E6fz94J9'
 
 send_to_telegram(new_msg, prev_msg_file)
 print('Script completed!')
